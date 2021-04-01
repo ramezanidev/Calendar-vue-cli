@@ -1,26 +1,39 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div id="app">
+        <leftMenu />
+        <calendar class="calendar"/>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import components
+import leftMenu from './components/left-menu';
+import calendar from './components/calendar';
+
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  components: { 
+    leftMenu,
+    calendar,
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex: auto;
+}
+.calendar{
+  height: 100%;
+  display: flex;
+  flex: auto;
+  background-color: turquoise;
 }
 </style>
