@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <leftMenu />
-        <calendar class="calendar"/>
+        <calendar />
     </div>
 </template>
 
@@ -30,10 +30,5 @@ export default {
   height: 100%;
   flex: auto;
 }
-.calendar{
-  height: 100%;
-  display: flex;
-  flex: auto;
-  background-color: turquoise;
-}
+
 </style>

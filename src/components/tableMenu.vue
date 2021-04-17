@@ -1,7 +1,7 @@
 <template>
   <div class="table">
     <header>
-      <span>{{title}}</span>
+      <span @click="setDate">{{title}}</span>
       <div>
         <img @click="thisMonth++" src="../assets/img/svg/arrow.svg" />
         <img @click="thisMonth--" src="../assets/img/svg/arrow.svg" />
@@ -16,12 +16,11 @@
       <span>Fr</span>
       <span>Sa</span>
     </div>
-    <div class="calendar" ref="calendar">
-        <span v-for="i in 7" :key="i" v-text="(firstDay < i) ? new Date(thisYear,thisMonth,i - firstDay).getDate() : null"></span>
-        <span v-for="i in (totalDay)" :key="i" v-text="new Date(thisYear,thisMonth,i - (firstDay - 7)).getDate()"></span>
+    <div class="calendar" ref="calendar" @wheel="($event.deltaY / -100 == 1) ? thisMonth++ : thisMonth-- ">
+        <span v-for="i in 7" :key="i" v-text="computedDate(i,true)" :title="computedFullDate(computedDate(i,true))"></span>
+        <span v-for="i in (totalDay)" :key="i" v-text="computedDate(i,false)" :title="computedFullDate(computedDate(i,false))"></span>
     </div>
 </div>
-  
 </template>
 
 <script>
@@ -61,6 +60,29 @@ export default {
       }
   },
   methods:{
+      computedFullDate(e){
+        const nowDate = new Date(this.thisYear,this.thisMonth, e);
+        const options = {
+            day:'numeric',
+            month:'long',
+            year:'numeric'
+        };
+        const fullDate = new Intl.DateTimeFormat('en-US', options).format(nowDate);
+        if(new Intl.DateTimeFormat('en-US', options).format(new Date()) === fullDate){
+            return "toDay"
+        }else{
+            return e && fullDate
+        }
+      },
+      computedDate(e,status){
+          if(status){
+              let now = new Date(this.thisYear,this.thisMonth, e - this.firstDay).getDate()
+              return (this.firstDay < e) ? now : null
+          }else{
+              let now = new Date(this.thisYear,this.thisMonth, e - (this.firstDay - 7)).getDate()
+              return now
+          }
+      },
       setDate(){
           let now = new Date();
           this.thisYear = now.getFullYear();
@@ -69,11 +91,12 @@ export default {
           this.thisDay = now.getDay();
       },
       changeDate(){
+        let now = new Date(this.thisYear,this.thisMonth,this.thisDate);
+        this.title = new Intl.DateTimeFormat('en-US', {month:'long',year:"numeric"}).format(now);
         setTimeout(() => {
-            let now = new Date(this.thisYear,this.thisMonth,this.thisDate);
-            this.title = new Intl.DateTimeFormat('en-US', {month:'long',year:"numeric"}).format(now);
             this.firstDay = new Date(this.thisYear,this.thisMonth).getDay();
-            this.totalDay = new Date(this.thisYear,this.thisMonth + 1, 0).getDate() - (7 - this.firstDay);            
+            this.totalDay = new Date(this.thisYear,this.thisMonth + 1, 0).getDate() - (7 - this.firstDay);
+
         }, 1000);
       },
   },
@@ -90,11 +113,11 @@ export default {
         transition: 1000ms;
    }
    .changeNext{
-       transform: translate(50%,0) scale(0.4);
+       transform: translate(100%,0) scale(0.4);
        opacity: 0 !important;
    }
    .changePrev{
-       transform: translate(-50%,0) scale(0.4);
+       transform: translate(-100%,0) scale(0.4);
        opacity: 0 !important;
    }
   .calendar{
@@ -113,6 +136,23 @@ export default {
         font-size: 15px;
         cursor: pointer;
         user-select: none;
+        &:hover{
+            background-color: #ffffff14;
+        }
+        &:active{
+            background-color: #0000001c;
+        }
+    }
+    span[title='toDay']{
+        background-color: #1f1f1f;
+        box-sizing: border-box;
+        border: 3px double #828282;
+        &:hover{
+            background-color: transparent;
+        }
+        &:active{
+            background-color: #ffffff0d;
+        }
     }
 }
 }
@@ -125,6 +165,7 @@ header {
     color: #fff;
     font-size: 16px;
     margin: auto 0;
+    cursor: pointer;
   }
   div {
     height: 100%;
